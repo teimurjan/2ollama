@@ -1,0 +1,56 @@
+{
+  "name": "2ollama",
+  "version": "0.1.0",
+  "description": "Proxy server that translates various LLM API formats (Codestral, OpenAI, etc.) to Ollama",
+  "type": "module",
+  "bin": {
+    "2ollama": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "build": "tsup",
+    "check": "biome check --write",
+    "lint": "biome lint",
+    "format": "biome format --write",
+    "typecheck": "tsc",
+    "prepublishOnly": "bun run build"
+  },
+  "keywords": [
+    "ollama",
+    "codestral",
+    "openai",
+    "proxy",
+    "llm",
+    "code-completion",
+    "fim",
+    "zed"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/user/2ollama.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.13",
+    "@types/bun": "latest",
+    "@types/node": "^22",
+    "tsup": "^8",
+    "typescript": "^5.9.3"
+  }
+}
