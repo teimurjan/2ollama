@@ -1,4 +1,5 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import { log } from "./log.js";
 import type { ProviderContext, RouteHandler } from "./provider.js";
 import { getProviders } from "./providers/index.js";
 
@@ -37,7 +38,6 @@ export function startServer(config: ServerConfig): void {
   const { port, ollamaUrl, defaultModel } = config;
 
   const providers = getProviders(config.providers);
-
   const enabledNames = providers.map((p) => p.name);
 
   const ctx: ProviderContext = {
@@ -68,7 +68,7 @@ export function startServer(config: ServerConfig): void {
       return;
     }
 
-    console.log(`[${req.method}] ${path}`);
+    log.request(req.method || "?", path);
 
     if (path === "/" || path === "/health") {
       sendJson(res, 200, { status: "ok", ollama: ollamaUrl, providers: enabledNames });
@@ -83,13 +83,18 @@ export function startServer(config: ServerConfig): void {
       return;
     }
 
+    log.warn(`Not found: ${path}`);
     sendJson(res, 404, { error: "Not found" });
   });
 
   server.listen(port, () => {
-    console.log(`🚀 2ollama proxy running on http://localhost:${port}`);
-    console.log(`   Proxying to Ollama at ${ollamaUrl}`);
-    console.log(`   Default model: ${defaultModel}`);
-    console.log(`   Providers: ${enabledNames.join(", ")}`);
+    log.startup([
+      "\x1b[1m\x1b[36m2ollama\x1b[0m",
+      "",
+      `\x1b[2mProxy\x1b[0m     http://localhost:${port}`,
+      `\x1b[2mOllama\x1b[0m    ${ollamaUrl}`,
+      `\x1b[2mModel\x1b[0m     ${defaultModel}`,
+      `\x1b[2mProviders\x1b[0m ${enabledNames.join(", ")}`,
+    ]);
   });
 }

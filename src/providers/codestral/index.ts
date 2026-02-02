@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { log } from "../../log.js";
 import type { Provider, ProviderContext } from "../../provider.js";
 import { parseNDJSON, transformRequest, transformResponse } from "./transform.js";
 import type { CodestralRequest, OllamaResponse } from "./types.js";
@@ -31,7 +32,7 @@ async function handleFimCompletions(
     const codestralReq: CodestralRequest = JSON.parse(body);
     const ollamaReq = transformRequest(codestralReq, ctx.defaultModel);
 
-    console.log(`[FIM] model=${ollamaReq.model} stream=${ollamaReq.stream}`);
+    log.proxy("fim", `model=${ollamaReq.model} stream=${ollamaReq.stream}`);
 
     const ollamaRes = await fetch(`${ctx.ollamaUrl}/api/generate`, {
       method: "POST",
@@ -41,7 +42,7 @@ async function handleFimCompletions(
 
     if (!ollamaRes.ok) {
       const error = await ollamaRes.text();
-      console.error(`[Ollama Error] ${ollamaRes.status}: ${error}`);
+      log.error(`Ollama ${ollamaRes.status}: ${error}`);
       ctx.sendJson(res, ollamaRes.status, {
         error: { message: error, type: "ollama_error" },
       });
@@ -66,7 +67,7 @@ async function handleFimCompletions(
     const codestralRes = transformResponse(ollamaData, ollamaReq.model, ctx.generateId);
     ctx.sendJson(res, 200, codestralRes);
   } catch (error) {
-    console.error("[Error]", error);
+    log.error(String(error));
     ctx.sendJson(res, 500, {
       error: { message: String(error), type: "proxy_error" },
     });
@@ -77,6 +78,10 @@ export const codestralProvider: Provider = {
   name: "codestral",
   routes: [
     { method: "GET", path: "/v1/models", handler: handleModels },
-    { method: "POST", path: "/v1/fim/completions", handler: handleFimCompletions },
+    {
+      method: "POST",
+      path: "/v1/fim/completions",
+      handler: handleFimCompletions,
+    },
   ],
 };

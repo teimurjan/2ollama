@@ -18,8 +18,8 @@
     "dist"
   ],
   "scripts": {
-    "dev": "bun run --watch src/index.ts",
-    "start": "bun run src/index.ts",
+    "dev": "bun run --watch src/cli.ts",
+    "start": "bun run src/cli.ts",
     "build": "tsup",
     "check": "biome check --write",
     "lint": "biome lint",

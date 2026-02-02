@@ -35,14 +35,19 @@ export interface OllamaResponse {
   eval_count?: number;
 }
 
-export interface CodestralFimResponse {
+export interface CodestralResponse {
   id: string;
-  object: "text_completion";
+  object: "chat.completion";
   model: string;
   created: number;
   choices: {
     index: number;
-    text: string;
+    message: {
+      content: string;
+      role: "assistant";
+      tool_calls: null;
+      prefix: boolean;
+    };
     finish_reason: string;
   }[];
   usage: {
@@ -52,14 +57,16 @@ export interface CodestralFimResponse {
   };
 }
 
-export interface CodestralFimChunk {
+export interface CodestralStreamChunk {
   id: string;
-  object: "text_completion";
+  object: "chat.completion.chunk";
   model: string;
   created: number;
   choices: {
     index: number;
-    text: string;
+    delta: {
+      content: string;
+    };
     finish_reason: string | null;
   }[];
 }

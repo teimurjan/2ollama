@@ -1,7 +1,7 @@
 import type {
-  CodestralFimChunk,
-  CodestralFimResponse,
   CodestralRequest,
+  CodestralResponse,
+  CodestralStreamChunk,
   OllamaRequest,
   OllamaResponse,
 } from "./types.js";
@@ -38,16 +38,21 @@ export function transformResponse(
   ollama: OllamaResponse,
   model: string,
   generateId: () => string,
-): CodestralFimResponse {
+): CodestralResponse {
   return {
     id: generateId(),
-    object: "text_completion",
+    object: "chat.completion",
     model,
     created: Math.floor(Date.now() / 1000),
     choices: [
       {
         index: 0,
-        text: ollama.response,
+        message: {
+          content: ollama.response,
+          role: "assistant",
+          tool_calls: null,
+          prefix: false,
+        },
         finish_reason: ollama.done_reason || "stop",
       },
     ],
@@ -83,15 +88,17 @@ export async function* parseNDJSON(
 
       try {
         const ollama: OllamaResponse = JSON.parse(line);
-        const chunk: CodestralFimChunk = {
+        const chunk: CodestralStreamChunk = {
           id: generateId(),
-          object: "text_completion",
+          object: "chat.completion.chunk",
           model,
           created: Math.floor(Date.now() / 1000),
           choices: [
             {
               index: 0,
-              text: ollama.response,
+              delta: {
+                content: ollama.response,
+              },
               finish_reason: ollama.done ? ollama.done_reason || "stop" : null,
             },
           ],
