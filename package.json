@@ -37,11 +37,11 @@
     "fim",
     "zed"
   ],
-  "author": "",
+  "author": "Teimur Gasanov <me@teimurjan.dev> (https://github.com/teimurjan)",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/user/2ollama.git"
+    "url": "git+https://github.com/teimurjan/2ollama.git"
   },
   "engines": {
     "node": ">=18"
