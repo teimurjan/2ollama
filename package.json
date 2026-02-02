@@ -1,6 +1,6 @@
 {
   "name": "2ollama",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Proxy server that translates various LLM API formats (Codestral, OpenAI, etc.) to Ollama",
   "type": "module",
   "bin": {
